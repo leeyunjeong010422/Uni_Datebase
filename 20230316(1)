@@ -1,0 +1,38 @@
+Java SE Development Kit 8u361 --> 오라클 윈도우 다운
+
+C:\Program Files\Java\jdk1.8.0_361\bin
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DBConn {
+   
+   private static void main(String[] args) {
+      Connection conn = null;
+      
+      try {
+         Class.forName("orcl.jdbc.driver.OracleDriver");
+         
+         conn = DriverManager.getConnection("jdbc:orcle:thin:1521:xe", "system", "601");
+         
+         System.out.println("DB 접속 성공!!");
+         conn.close();
+      } catch (ClassNotFoundException cnfe) {
+         System.out.println("해당 클래스를 찾을 수 없습니다." +  cnfe.getMessage());
+      } catch (SQLException e) {
+         System.out.println("DB 접속 실패" + e.getMessage());
+      }
+   }
+
+}
+
+
+
+C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib 에서 ojdbc6
+
+C:\Program Files\Java\jre1.8.0_361\lib\ext 에 붙여넣기
+
+빌드패스 -> 라이브러리에 추가.
+
+오라클 Previous Version 두번 클릭 -> Windows 32-bit/64-bit 다운
