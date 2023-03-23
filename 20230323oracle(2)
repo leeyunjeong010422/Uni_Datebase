@@ -1,0 +1,12 @@
+drop table  goodsinfo;   
+create table goodsinfo (
+    code char(5) not null,
+    name varchar(30) not null,
+    price number not null,
+    maker varchar(20),
+    primary key(code)
+    );
+commit;
+insert into goodsinfo (code, name, price, maker)values('1001','디지털TV',350000,'LG');  -- (code, name, price, maker) 는 안써도 됌
+
+select * from goodsinfo;
