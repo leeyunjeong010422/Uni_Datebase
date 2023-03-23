@@ -6,7 +6,7 @@ create table goodsinfo (
     maker varchar(20),
     primary key(code)
     );
-commit;
+commit; --안하면 이클립스에 안뜸
 insert into goodsinfo (code, name, price, maker)values('1001','디지털TV',350000,'LG');  -- (code, name, price, maker) 는 안써도 됌
 
 select * from goodsinfo;
