@@ -60,5 +60,5 @@ public class DBConn {
       } catch(SQLException e) {
          System.out.println("DB접속실패 " + e.getMessage());
       }
-   }
+   }    
 }
