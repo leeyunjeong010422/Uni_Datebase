@@ -1,0 +1,33 @@
+select * from tCity;
+
+desc tCity;  --보고자 하는 테이블의 구조를 보여줌
+desc tStaff;
+
+select name from tStaff; --이름만 뽑아서 보기
+
+select count(*) as "총 직원수" from tStaff;
+
+select count(*) from tStaff where salary >= 400;   -- tStaff에서 월급(salary)가 400이 넘는 사람들 명수 출력하기 
+select count(*) from tStaff where salary >= 10000;
+
+select name from tStaff where salary >= 400; -- tStaff에서 월급(salary)가 400이 넘는 사람들의 이름 출력하기
+
+select count(name) from tStaff;
+select count(depart) from tStaff;
+
+select count(distinct depart) from tStaff;  --중복제외
+select distinct depart from tStaff;
+
+select score from tStaff;  
+select count(score)from tStaff; --갯수 출력하기
+select count(*)-count(score) from tStaff;
+select count(*) from tStaff where score is NULL; 
+
+select sum(popu), avg(popu) from tCity;  --sum()총합/avg()평균
+select sum(score), avg(score) from tStaff where depart = '인사과';
+
+select min(salary),max(salary) from tStaff where depart = '영업부'; --min()최대/max()최소
+
+SELECT SUM(name) FROM tStaff; -- 에러
+SELECT MIN(name) FROM tStaff;
+SELECT MAX(popu), name FROM tCity; --에러
