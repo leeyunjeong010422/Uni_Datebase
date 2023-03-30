@@ -31,3 +31,11 @@ select min(salary),max(salary) from tStaff where depart = '영업부'; --min()�
 SELECT SUM(name) FROM tStaff; -- 에러
 SELECT MIN(name) FROM tStaff;
 SELECT MAX(popu), name FROM tCity; --에러
+
+SELECT AVG(salary) FROM tStaff;
+SELECT SUM(salary)/COUNT(salary) FROM tStaff; 
+SELECT SUM(salary)/COUNT(*) FROM tStaff;
+
+SELECT AVG(score) FROM tStaff;
+SELECT SUM(score)/COUNT(score) FROM tStaff;
+SELECT SUM(score)/COUNT(*) FROM tStaff; -- 중간에 null값이 있어서 값이 떨어진다. 교재 83쪽, 84쪽 참고하길
