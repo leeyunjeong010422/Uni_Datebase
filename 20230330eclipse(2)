@@ -1,0 +1,94 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class OracleDB {
+	
+	static Scanner sc = new Scanner(System.in);
+	static Connection conn = null;
+	static Statement stmt = null;
+	
+	public static void main(String[] args) {
+		sqlQuery();
+	}
+	
+	public static void sqlQuery() {
+		System.out.println("원하는 쿼리를 선택하세요." 
+								+ "1. select | 2. insert | 3. update | 4. delete | 0. exit");
+		
+		int sel = sc.nextInt();
+		
+		try {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "system", "601");
+				
+				System.out.println("DB 연결 성공입니다요~");
+				
+				//데이터 조회
+				//1. statement 객체 생성
+				stmt = conn.createStatement();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			switch (sel) {
+			case 1:
+				sqlSelect();
+				sqlQuery();
+				break;
+			case 2:
+				sqlInsert();
+				sqlQuery();
+				break;
+			case 3:
+				sqlUpdate();
+				sqlQuery();
+				break;
+			case 4:
+				sqlDelete();
+				sqlQuery();
+				break;
+			case 0:
+				System.exit(0);
+				break;
+			default:
+				break;
+			}
+			//5. 생성된 모든 객체들을 close()메소드로 메모리 해제: 생성된 순서의 역순
+			
+		} finally {
+			try {
+				stmt.close();
+			} catch (Exception e) {
+				
+			}
+			try {
+				conn.close();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			
+		}
+	}
+	
+	public static void sqlSelect() {
+		
+	}
+	
+	public static void sqlInsert() {
+		
+	}
+	
+	public static void sqlUpdate() {
+		
+	}
+	
+	public static void sqlDelete() {
+		
+	}
+}
