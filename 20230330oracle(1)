@@ -38,4 +38,4 @@ SELECT SUM(salary)/COUNT(*) FROM tStaff;
 
 SELECT AVG(score) FROM tStaff;
 SELECT SUM(score)/COUNT(score) FROM tStaff;
-SELECT SUM(score)/COUNT(*) FROM tStaff; -- 중간에 null값이 있어서 값이 떨어진다. 교재 83쪽, 84쪽 참고하길
+SELECT SUM(score)/COUNT(*) FROM tStaff; -- 중간에 null값이 있어서 값이 떨어진다. 교재 83쪽, 84쪽을 참고하면 됨
