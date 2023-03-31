@@ -1,6 +1,6 @@
 SELECT depart, AVG(salary) FROM tStaff GROUP BY depart; -- 부서 종류 별로 평균을 집계
 
-select depart, count(*), max(joindate), avg(score) from tstaff group by depart; -- 교재 86page 결과값 코드
+select depart, count(*), max(joindate), avg(score) from tstaff group by depart; -- 교재 86page에 나와있는 그림의 결과값 코드
 
 select depart, gender, count(*) from tstaff group by depart, gender; -- 부서별 남여 수
 
