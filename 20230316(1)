@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConn {
-   
+     ㄹㅇ
    private static void main(String[] args) {
       Connection conn = null;
       
