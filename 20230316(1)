@@ -7,7 +7,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConn {
-     ㄹㅇ
    private static void main(String[] args) {
       Connection conn = null;
       
@@ -30,9 +29,6 @@ public class DBConn {
 
 
 C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib 에서 ojdbc6
-
 C:\Program Files\Java\jre1.8.0_361\lib\ext 에 붙여넣기
-
 빌드패스 -> 라이브러리에 추가.
-
 오라클 Previous Version 두번 클릭 -> Windows 32-bit/64-bit 다운
