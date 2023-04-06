@@ -1,0 +1,8 @@
+
+public class OracleMain {
+	public static void main(String[] args) {
+		OracleDB db = new OracleDB();
+		
+		db.sqlQuery();
+	}
+}
