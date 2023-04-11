@@ -1,4 +1,4 @@
--- Insert 구문부터 코딩 수정해서 과제
+-- Insert 구문부터 코딩 수정해서 과제하기 (4/13)
 
 import java.sql.Connection;
 import java.sql.DriverManager;
