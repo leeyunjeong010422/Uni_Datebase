@@ -238,3 +238,264 @@ public class OracleMain {
 	}
 }
 
+------------------------------------------------과제로 인한 수정---------------------------------------------------------------------------
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class OracleDB {
+	
+	 Scanner sc = new Scanner(System.in);
+	 Connection conn = null;
+	 Statement stmt = null;
+	 ResultSet rs;
+	 String strArgs[] = new String[4];
+	 PreparedStatement pstmt = null;
+	
+//	public static void main(String[] args) {
+//		sqlQuery();
+//	}
+	
+	public  void sqlQuery() {
+		System.out.println("\n원하는 쿼리를 선택하세요. \n1.select 2.insert 3.update 4.delete 0.exit ");
+		
+		int sel = sc.nextInt();
+		
+		try {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","system","1116");
+				
+				System.out.println("DB연결성공!!!");
+				
+				//데이터조회
+				//1.Statement 객체 생성
+				stmt = conn.createStatement();
+				
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			switch (sel) {
+			case 1: 
+				sqlSelect();
+				sqlQuery();
+				break;
+			
+			case 2: 
+				sqlInsert();
+				sqlQuery();
+				break;
+			
+			case 3: 
+				sqlUpdate();
+				sqlQuery();
+				break;
+			
+			case 4: 
+				sqlDelete();
+				sqlQuery();
+				break;
+			
+			case 0: 
+				System.exit(0);
+				break;
+				
+			default:
+				break;				
+			}
+			//5.생성된 모든 객체들을 close()메소드를 메모리 해제:생성된 순서의 역순
+			
+		} finally {
+			try {
+				stmt.close();
+			} catch (Exception e) {
+				
+			}
+			
+			try {
+				conn.close();
+			} catch (Exception e) {
+				
+			}
+			
+		}
+	}
+	public  void sqlSelect() {
+		
+		System.out.println("1.전체검색  2.상품코드검색");
+		int sel = sc.nextInt();
+		if(sel == 1) {
+			try {
+				String sql = "select * from goodsinfo";
+				pstmt = conn.prepareStatement(sql);
+				rs = pstmt.executeQuery();
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		else if(sel == 2) {
+			System.out.println("검색할 상품코드를 입력: ");
+			int codeNum = sc.nextInt();
+			
+			try {
+				String sql = "select * from goodsinfo where code = ?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, codeNum);
+				rs = pstmt.executeQuery();
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			}
+			
+		
+		
+		
+		
+		System.out.println("상품코드 상품명 \t\t가격 제조사");
+		System.out.println("------------------------------------");
+		
+		try {
+			while(rs.next()) {
+				String code = rs.getString("code");
+				String name = rs.getString("name");
+				int price = rs.getInt("price");
+				String maker = rs.getString("maker");
+				System.out.printf("%5s %s \t %8d %s \n",code ,name,price,maker);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	public  void sqlInsert() {
+		System.out.println("경고:입력 데이터는 상품코드 상품명 가격 제조사 순으로 입력하시오!!");
+		System.out.print("상품코드: ");
+		String code = sc.next();
+		System.out.print("상품명: ");
+		String name = sc.next();
+		System.out.print("가격: ");
+		int price = sc.nextInt();
+		System.out.print("제조사: ");
+		String maker = sc.next();
+		
+		
+		try {		
+			String sql = "insert into goodsinfo (code,name,price,maker) values (?,?,?,?)";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, code);
+			pstmt.setString(2, name);
+			pstmt.setInt(3, price);
+			pstmt.setString(4, maker);
+			pstmt.executeUpdate();
+			System.out.println("!입력완료!");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	public  void sqlUpdate() {
+		
+		System.out.print("수정할 상품코드를 선택하시오:");
+		int codeNum = sc.nextInt();
+		System.out.println("수정할 항목을 선택하시오");
+		System.out.println("1.상품명  2.상품가격  3.제조사");
+		int sel = sc.nextInt();
+		
+		
+		if(sel == 1) {
+			System.out.print("변경할 상품명을 입력하시오: ");
+			String chName = sc.next();
+			
+			try {
+				String sql = "UPDATE goodsinfo SET name=? WHERE code=?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, chName);
+				pstmt.setInt(2, codeNum);
+				rs = pstmt.executeQuery();
+				pstmt.executeUpdate();
+				System.out.println("!변경완료!");
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		else if(sel == 2) {
+			System.out.print("변경할 상품가격을 입력하시오: ");
+			int chPrice = sc.nextInt();
+			
+			try {
+				String sql = "UPDATE goodsinfo SET price=? WHERE code=?";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, chPrice);
+				pstmt.setInt(2, codeNum);
+				rs = pstmt.executeQuery();
+				pstmt.executeUpdate();
+				System.out.println("!변경완료!");
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+		} else if(sel == 3) {
+				System.out.print("변경할 제조사를 입력하시오: ");
+				String chMaker = sc.next();
+				
+				try {
+					String sql = "UPDATE goodsinfo SET maker=? WHERE code=?";
+					pstmt = conn.prepareStatement(sql);
+					pstmt.setString(1, chMaker);
+					pstmt.setInt(2, codeNum);
+					rs = pstmt.executeQuery();
+					pstmt.executeUpdate();
+					System.out.println("!변경완료!");
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		
+	}
+	public  void sqlDelete() {
+		sqlSelect();
+		System.out.print("삭제할 상품번호를 선택하시오 : ");
+		int codeNum = sc.nextInt();
+		
+		try {
+			String sql = "DELETE FROM goodsinfo WHERE code=?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, codeNum);
+	        pstmt.executeUpdate();	
+	        System.out.println("!삭제완료!");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+			
+		
+		
+		
+		
+	}
+
+}
+
+
+
+//OracleMain
+
+
+
+
