@@ -1,0 +1,9 @@
+
+public class MySQLDBMain {
+	
+	public static void main(String[] args) {
+		MySQLDB my = new MySQLDB();
+		my.sqlQuery();
+	}
+	
+}
