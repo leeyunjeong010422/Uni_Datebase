@@ -1,0 +1,69 @@
+[다운로드]
+
+1)mysql
+https://dev.mysql.com/downloads/installer/ 
+> 2번째꺼 
+
+!port:3306!
+
+(하다가 한글때문에 에러날 수 도 있음 : 뒤로 가서 한글다 지워버리기)
+
+2)connectorJ
+https://dev.mysql.com/downloads/connector/j/
+아카이브 > platform independent > 2번째꺼 
+
+파일 압축풀기...
+
+mysql-connector-j-8.0.31 > 복사
+C:\Program Files\Java\jre1.8.0_361\lib\ext > 붙여넣기
+
+패키지>클래스 만들기>buildpath>lib 에서 mysql-connector-j-8.0.31  추가하기
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+[MySQL]
+
+(1)eclipse와 연결하기
+MySQL8.0Command Line Client 
+> 비밀번호 > 
+
+show databases;
+create database malldb;
+> 이클립스에서  MySQLDB 실행 >DB접속성공
+
+(2)MySQL구문
+use malldb;
+
+create table saram(id char(10),name char(20),age int);
+
+desc saram;
+
+insert into saram (id,name,age)values('aaa','gildong',32);  //데이터 집어넣기
+
+select * from saram; //테이블 보기
++------+---------+------+
+| id   | name    | age  |
++------+---------+------+
+| aaa  | gildong |   32 |
+| bbb  | sunshin |   20 |
+| ccc  | ginea   |   25 |
++------+---------+------+
+
+update saram set name='jinea' where id='ccc'; //데이터 수정
+
+delete from saram where id='ccc'; //데이터 삭제
+
+drop table saram;
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+create table goodsinfo (
+    -> code char(5) not null,
+    -> name varchar(30) not null,
+    -> price int(8) not null,
+    -> maker varchar(20),
+    -> primary key(code)
+    -> );
+
+
+
