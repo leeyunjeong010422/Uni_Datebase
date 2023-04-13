@@ -131,13 +131,13 @@ public class MySQLDB {
 			e.printStackTrace();
 		}
 
-		System.out.println("\n수정할 상품코드를 입력하세요: ");
+		System.out.print("\n수정할 상품코드를 입력하세요: ");
 		int codeNum = sc.nextInt();
 
-		System.out.println("\n1.상품명 | 2.가격 | 3.제조사");
+		System.out.print("\n1.상품명 | 2.가격 | 3.제조사: ");
 		int colNum = sc.nextInt();
 
-		System.out.println("\n변경할 값을 입력하세요: ");
+		System.out.print("\n변경할 값을 입력하세요: ");
 		String change = sc.next();
 
 		try {
@@ -168,7 +168,7 @@ public class MySQLDB {
 
 			int result = pstmt.executeUpdate();
 			if (result > 0) {
-				System.out.println("수정되었습니다.");
+				System.out.println("\n수정이 완료 되었습니다.");
 			} else {
 				System.out.println("수정에 실패했습니다.");
 			}
