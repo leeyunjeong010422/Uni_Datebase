@@ -63,7 +63,7 @@ public class MySQLDB {
 
 	public void sqlSelect() {
 		try {
-			String sql = "select * from goodsinfo;"; // mysql에서는 마지막에 ; 을 붙여줘야 함.
+			String sql = "select * from goodsinfo;"; // mysql에서는 마지막에 ; 을 붙여줘야 함. 안 붙여주면 오류 발생
 
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
