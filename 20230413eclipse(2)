@@ -1,3 +1,5 @@
+//과제였음 20일까지 제출
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
