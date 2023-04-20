@@ -1,0 +1,183 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class MySQLDB {
+	
+	
+	Statement stmt = null;
+	Scanner sc = new Scanner(System.in);
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	String strArgs[] = new String[4];
+	
+	MySQLDBConn myDB = new MySQLDBConn();
+	Connection conn = myDB.dbConn();
+
+	public void sqlQuery() {
+		
+		System.out.println("\n원하는 쿼리를 선택하시오");
+		System.out.println("1.select  2.insert  3.update  4.delete  0.exit");
+		int sel = sc.nextInt();
+		
+			switch (sel) {
+			case 1: 
+				sqlSelect();
+				sqlQuery();
+				break;
+			
+			case 2: 
+				sqlInsert();
+				sqlQuery();
+				break;
+			
+			case 3: 
+				sqlUpdate();
+				sqlQuery();
+				break;
+			
+			case 4: 
+				sqlDelete();
+				sqlQuery();
+				break;
+			
+			case 0: 
+				System.out.println("DB종료!");
+				System.exit(0);
+				sqlQuery();
+				break;
+			
+	
+			}
+	}
+			
+		
+	
+	public void sqlSelect() {
+		try {
+			String sql = "select * from goodsinfo;";  //오라클에서는 ;(x) MySQL에서는 ;(o)
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			System.out.println("상품코드 상품명 \t\t가격 제조사");
+			System.out.println("---------------------------------");
+			
+			while (rs.next()) {
+				String code = rs.getString("code");
+				String name = rs.getString("name");
+				int price = rs.getInt("price");
+				String maker = rs.getString("maker");
+				System.out.printf("%5s %s \t %8d %s \n",code ,name,price,maker);				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	public void sqlInsert() {
+		System.out.println("주의 : 입력데이터는 상품코드 상품명 가격 제조사 순으로 입력하시오!!!");
+		
+		for(int i = 0; i<strArgs.length; i++) {
+			strArgs[i] = sc.next();
+		
+	}
+		
+		try {
+			String sql = "insert into goodsinfo (code,name,price,maker)"
+					+"values(?,?,?,?);";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, strArgs[0]);
+			pstmt.setString(2, strArgs[1]);
+			pstmt.setString(3, strArgs[2]);
+			pstmt.setString(4, strArgs[3]);
+			System.out.println("행이 추가되었습니다");
+			pstmt.executeUpdate();
+			sqlSelect();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	public void sqlUpdate() {
+		sqlSelect();
+		System.out.print("변경할 상품번호를 선택하여 입력하세요 : ");
+		String codeNum = sc.next();
+		
+		System.out.println("변경할 내용을 선택하세요 : 1.상품명 2.가격 3.제조사");
+		int sel = sc.nextInt();
+		
+		if(sel == 1) {
+			System.out.print("변경할 상품명 입력 : ");
+			String chName = sc.next();
+			
+			try {
+				String sql = "update goodsinfo set name = ? where code = ?;";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, chName);
+				pstmt.setString(2, codeNum);
+				pstmt.executeUpdate();
+				sqlSelect();
+				
+				}catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}else if (sel == 2)  {
+			System.out.print("변경할 가격 입력 : ");
+			int chPrice = sc.nextInt();
+			
+			try {
+				String sql = "update goodsinfo set price = ? where code = ?;";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, chPrice);
+				pstmt.setString(2, codeNum);
+				pstmt.executeUpdate();
+				sqlSelect();
+				
+				}catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			
+		}else if (sel == 3) {
+			System.out.print("변경할 제조사 입력 : ");
+			String chMaker = sc.next();
+			
+			try {
+				String sql = "update goodsinfo set maker = ? where code = ?;";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, chMaker);
+				pstmt.setString(2, codeNum);
+				pstmt.executeUpdate();
+				sqlSelect();
+				
+				}catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	
+	}
+	public void sqlDelete() {
+		sqlSelect();
+		
+		System.out.println("삭제할 상품번호를 선택하세요 : ");
+		int codeNum = sc. nextInt();
+		
+		try {
+			String sql = "delete from goodsinfo where code = ?;";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, codeNum);
+			pstmt.executeUpdate();
+			sqlSelect();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
