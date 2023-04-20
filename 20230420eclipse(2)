@@ -1,0 +1,122 @@
+//-BizUI class-
+
+import java.util.Scanner;
+
+public class BizUI {
+	private Scanner sc;
+	private Service serv;
+	
+	public BizUI() {
+		sc = new Scanner(System.in);
+		serv = new Service();
+	}
+	
+	public void showBiz() {
+		System.out.println("\n나 퇴근해야 하니까 빨리 주문해 ㅆㅂ!");
+		System.out.println("1. 햄버거 | 2. 음료수 | 3. 세트 | 4. 종료");
+		String menu = sc.nextLine();
+		
+		if(menu.equals("4") == true) {
+			System.out.println("종료합니다.");
+			return;
+		} else {
+			getBiz(menu);
+		}
+		showBiz();
+	}
+	
+	public void getBiz(String menuStr) {
+		System.out.println("주문 내역: ");
+		if (menuStr.equals("1") == true) {
+			System.out.println("햄버거를 골라라.");
+			String hamburg = sc.nextLine();
+			System.out.println("갯수를 골라라.");
+			int suryang = Integer.parseInt(sc.nextLine());
+			Store newuser = new Store(hamburg, suryang);
+			serv.order(newuser);
+		}
+	}
+	
+}
+
+
+//-Service-
+
+
+public class Service {
+	private DAO dao;
+	public Service() {
+		dao = new DAO();
+	}
+	
+	public void order(Store newuser) {
+		System.out.println("주문을 확인합니다.");
+		System.out.println(newuser.getBurger() + "이고, ");
+		System.out.println(newuser.getNum() + "개 맞습니까?");
+		
+		dao.addorder(newuser);
+	}
+
+}
+
+
+//-Store-
+
+
+public class Store {
+	private String burger;
+	private int num;
+	
+	public Store(String burger, int num) {
+		this.burger = burger;
+		this.num = num;
+	}
+
+	public String getBurger() {
+		return burger;
+	}
+
+	public void setBurger(String burger) {
+		this.burger = burger;
+	}
+
+	public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+
+}
+
+
+//-DAO-
+
+
+public class DAO {
+	private Store[] arr;
+	public DAO() {
+		arr = new Store[10];
+	}
+	
+	public void addorder(Store neworder) {
+		System.out.println("주문하신 버거는 " + neworder.getBurger() + "로 " + neworder.getNum() + "개 입니다.");
+	}
+	
+}
+
+
+//-FastFoodMain-
+
+
+public class FastFoodMain {
+
+	public static void main(String[] args) {
+		BizUI ui = new BizUI();
+		ui.showBiz();
+
+	}
+
+}
+
