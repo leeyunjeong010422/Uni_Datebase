@@ -12,7 +12,7 @@ public class BizUI {
 	}
 	
 	public void showBiz() {
-		System.out.println("\n나 퇴근해야 하니까 빨리 주문해 ㅆㅂ!");
+		System.out.println("\n주문하시겠습니까?");
 		System.out.println("1. 햄버거 | 2. 음료수 | 3. 세트 | 4. 종료");
 		String menu = sc.nextLine();
 		
