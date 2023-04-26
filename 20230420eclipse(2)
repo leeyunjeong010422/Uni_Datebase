@@ -1,5 +1,4 @@
 //-BizUI class-
-
 import java.util.Scanner;
 
 public class BizUI {
@@ -41,8 +40,6 @@ public class BizUI {
 
 
 //-Service-
-
-
 public class Service {
 	private DAO dao;
 	public Service() {
@@ -61,8 +58,6 @@ public class Service {
 
 
 //-Store-
-
-
 public class Store {
 	private String burger;
 	private int num;
@@ -92,8 +87,6 @@ public class Store {
 
 
 //-DAO-
-
-
 public class DAO {
 	private Store[] arr;
 	public DAO() {
@@ -108,8 +101,6 @@ public class DAO {
 
 
 //-FastFoodMain-
-
-
 public class FastFoodMain {
 
 	public static void main(String[] args) {
