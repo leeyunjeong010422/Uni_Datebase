@@ -41,18 +41,22 @@ public class OracleDB {
 				sqlSelect();
 				sqlQuery();
 				break;
+
 			case 2:
 				sqlInsert();
 				sqlQuery();
 				break;
+
 			case 3:
 				sqlUpdate();
 				sqlQuery();
 				break;
+
 			case 4:
 				sqlDelete();
 				sqlQuery();
 				break;
+
 			case 0:
 				System.exit(0);
 				break;
