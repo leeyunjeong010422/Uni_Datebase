@@ -29,6 +29,7 @@ public class BizUI {
 		if (menuStr.equals("1") == true) {
 			System.out.println("햄버거 메뉴를 골라라.");
 			String hamburg = sc.nextLine();
+			
 			System.out.println("햄버거 갯수를 골라라.");
 			int suryang = Integer.parseInt(sc.nextLine());
 			Store newuser = new Store(hamburg, suryang);
@@ -53,7 +54,6 @@ public class Service {
 		
 		dao.addorder(newuser);
 	}
-
 }
 
 
@@ -82,7 +82,6 @@ public class Store {
 	public void setNum(int num) {
 		this.num = num;
 	}
-
 }
 
 
@@ -95,8 +94,7 @@ public class DAO {
 	
 	public void addorder(Store neworder) {
 		System.out.println("주문하신 버거는 " + neworder.getBurger() + "로 " + neworder.getNum() + "개 입니다.");
-	}
-	
+	}	
 }
 
 
@@ -108,6 +106,5 @@ public class FastFoodMain {
 		ui.showBiz();
 
 	}
-
 }
 
