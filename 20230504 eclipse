@@ -1,0 +1,242 @@
+java project : FastFoodDB
+
+class : BizDao
+
+
+public class BizDao {
+
+	public void addorder(Store order) {
+		if(order.getMenuStr().equals("1")) {
+			System.out.println("주문하신 메뉴는 " + order.getItem() + "이며,수량은" 
+		+ order.getSuryang() +"개 입니다.");
+		System.err.println("주문이 완료 되었습니다.");
+		updateOrder(order);
+		showOrder(order);
+		} else if(order.getMenuStr().equals("2")) {
+			System.out.println("주문하신 메뉴는 " + order.getItem() + "이며,수량은" 
+		+ order.getSuryang() +"개 입니다.");
+		System.err.println("주문이 완료 되었습니다.");
+		updateOrder(order);
+		showOrder(order);
+		} else if(order.getMenuStr().equals("3")) {
+			System.out.println("주문하신 메뉴는 " + order.getItem() + "이며,수량은" 
+		+ order.getSuryang() +"개 입니다.");
+		System.err.println("주문이 완료 되었습니다.");
+		
+		updateOrder(order);
+		showOrder(order);
+		}
+	}
+	public void showOrder(Store order) {
+			
+		}
+		public void updateOrder(Store order) {
+			
+		}
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+
+class : BizUI
+
+import java.util.Scanner;
+
+public class BizUI {
+
+	private Scanner sc;
+	private Service serv;
+	
+	public BizUI() {
+		sc = new Scanner(System.in);
+		serv = new Service();
+		
+	}
+	
+	String item = null;
+	int suryang = 0;
+	int choice;
+	
+	public void showBiz() {
+		System.out.println("주문하세요!");
+		System.out.println("1.햄버거  2.음료수  3.세트  4.종료");
+		String menu = sc.nextLine();
+		if(menu.equals("4") == true) {
+			System.out.println("종료합니다!");
+			return;
+		} else {
+			getBiz(menu);
+		}
+		showBiz();
+	}
+	
+	public void getBiz(String menuStr) {
+		System.out.println("상세주문하세요~ 키보드 입력");
+		if(menuStr.equals("1") == true) {
+			System.out.println("햄버거를 고르세요~");
+			System.out.println("1.치즈버거  2.불고기버거  3.상하이버거  4.빅맥");
+			choice = Integer.parseInt(sc.nextLine());
+			
+			if(choice ==1) {
+				item = "치즈";
+			} else if (choice == 2) {
+				item ="불고기";
+			} else if (choice == 3) {
+				item ="상하이";
+			} else if (choice == 4) {
+				item ="빅맥";
+			}
+			
+		}
+		if(menuStr.equals("2") == true) {
+			System.out.println("음료수를 고르세요~");
+			System.out.println("1.콜라  2.사이다  3.환타  4.생수");
+			choice = Integer.parseInt(sc.nextLine());
+			
+			if(choice ==1) {
+				item = "콜라";
+			} else if (choice == 2) {
+				item ="사이다";
+			} else if (choice == 3) {
+				item ="환타";
+			} else if (choice == 4) {
+				item ="생수";
+			}
+			
+		}
+		if(menuStr.equals("3") == true) {
+			System.out.println("햄버거를 고르세요~");
+			System.out.println("1.치즈버거 세트  2.불고기버거 세트  3.상하이버거 세트  4.빅맥 세트");
+			choice = Integer.parseInt(sc.nextLine());
+			
+			if(choice ==1) {
+				item = "치즈버거 세트";
+			} else if (choice == 2) {
+				item ="불고기버거 세트";
+			} else if (choice == 3) {
+				item ="상하이버거 세트";
+			} else if (choice == 4) {
+				item ="빅맥 세트";
+			}
+			
+		}
+		System.out.println("수량을 고르세요~~");
+		int suryang = Integer.parseInt(sc.nextLine());
+		Store newuser = new Store(menuStr, choice, item, suryang);
+		serv.order(newuser);
+		
+		System.out.println("---------------UI화면입니다---------------");
+	}
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+class:FastFoodMain
+
+
+public class FastFoodMain {
+	public static void main(String[] args) {
+		BizUI ui = new BizUI();
+		ui.showBiz();
+		
+	}
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+class : Service
+
+
+public class Service {
+
+   private BizDao dao;
+
+   public Service() {
+      dao = new BizDao();
+   }
+
+   public void order(Store newuser) {
+      System.out.println("주문을 확인합니다.");
+
+      if (newuser.getMenuStr().equals("1")) {
+         System.out.println(newuser.getItem() + "버거");
+         System.out.println(newuser.getSuryang() + "개 맞습니까?");
+         dao.addorder(newuser);
+      } 
+      else if (newuser.getMenuStr().equals("2")) {
+         System.out.println(newuser.getItem() + "음료");
+         System.out.println(newuser.getSuryang() + "개 맞습니까?");
+         dao.addorder(newuser);
+      } 
+      else if (newuser.getMenuStr().equals("3")) {
+         System.out.println(newuser.getItem() + "세트");
+         System.out.println(newuser.getSuryang() + "개 맞습니까?");
+         dao.addorder(newuser);
+      } 
+      
+      System.out.println("++++++++++++++++비즈니스로직 화면++++++++++++++++");
+   }
+
+}
+
+---------------------------------------------------------------------------------------------------------------------------
+class:Store
+
+
+public class Store {
+	
+	private String menuStr;
+	private int choice;
+	private String item;
+	private int suryang;
+	
+	public Store(String menuStr, int shoice,String item,int suryang) {
+		this.menuStr = menuStr;
+		
+		if(menuStr.equals("1")) {
+			this.choice = choice;
+			this.item = item;
+			this.suryang = suryang;
+		} else if (menuStr.equals("2")) {
+			this.choice = choice;
+			this.item = item;
+			this.suryang = suryang;
+		} else if (menuStr.equals("3")) {
+			this.choice = choice;
+			this.item = item;
+			this.suryang = suryang;
+		} 
+
+	}
+
+	public String getMenuStr() {
+		return menuStr;
+	}
+
+	public void setMenuStr(String menuStr) {
+		this.menuStr = menuStr;
+	}
+
+	public int getChoice() {
+		return choice;
+	}
+
+	public void setChoice(int choice) {
+		this.choice = choice;
+	}
+
+	public String getItem() {
+		return item;
+	}
+
+	public void setItem(String item) {
+		this.item = item;
+	}
+
+	public int getSuryang() {
+		return suryang;
+	}
+
+	public void setSuryang(int suryang) {
+		this.suryang = suryang;
+	}
+	
+	
+}
