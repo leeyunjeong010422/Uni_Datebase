@@ -1,3 +1,8 @@
+데이터베이스와 테이블 생성
+- 소스코드 완성 후 테이블 생성
+- 테이블 명과 필드 명은 자유 결정
+- 주문 완료 할 때마다 테이블 
+
 java project : FastFoodDB
 
 class : BizDao
