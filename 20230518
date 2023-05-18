@@ -1,0 +1,121 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class BizDao {
+	
+
+	public void addorder(Store order) {
+		
+		if(order.getMenuStr().equals("1")) {
+			System.out.println("주문하신 메뉴는 " + order.getItem() + "이며,수량은" 
+		+ order.getSuryang() +"개 입니다.");
+		System.err.println("주문이 완료 되었습니다.");
+		updateOrder(order);
+		showOrder(order);
+		} else if(order.getMenuStr().equals("2")) {
+			System.out.println("주문하신 메뉴는 " + order.getItem() + "이며,수량은" 
+		+ order.getSuryang() +"개 입니다.");
+		System.err.println("주문이 완료 되었습니다.");
+		updateOrder(order);
+		showOrder(order);
+		} else if(order.getMenuStr().equals("3")) {
+			System.out.println("주문하신 메뉴는 " + order.getItem() + "이며,수량은" 
+		+ order.getSuryang() +"개 입니다.");
+		System.err.println("주문이 완료 되었습니다.");
+		
+		updateOrder(order);
+		showOrder(order);
+		}
+	}
+	public void showOrder(Store order) {
+		Connection conn = null;
+		PreparedStatement  pstmt = null;
+		ResultSet rs = null;
+		
+		String sql = "";
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/fastfood","root","1234");
+			
+			if(order.getMenuStr().equals("1")) {
+				sql = "select code, name, count from burger;";
+			}else if(order.getMenuStr().equals("2")) {
+				sql = "select code, name, count from drink;";
+			}else if(order.getMenuStr().equals("3")) {
+				sql = "select code, name, count from setmenu;";
+			}
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			System.out.println("순번" + "메뉴" + "수량");
+			System.out.println("--------------------------");
+			while(rs.next()) {
+				int code = rs.getInt("code");
+				String name = rs.getString("name");
+				int count = rs.getInt("count");
+				System.out.println(code + " " + name + " " + count);
+				
+			}
+		} catch(ClassNotFoundException e) {
+			System.out.println("해당 클래스를 찾을 수 없다." + e.getMessage());
+		} catch(SQLException se) {
+			System.out.println(se.getMessage());
+		} finally {
+			try {
+				rs.close();
+			} catch(Exception ignored) {
+				
+			}
+			
+			try {
+				conn.close(); 
+				} catch (Exception ignored) {
+			}
+		}
+		
+		}
+	public void updateOrder(Store order) {
+	      Connection conn = null;
+	      PreparedStatement pstmt = null;
+	      String sql = "";
+
+	      try {
+	         Class.forName("com.mysql.cj.jdbc.Driver");
+	         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/fastfood", "root", "1234");
+
+	         if (order.getMenuStr().equals("1")) {
+	            sql = "update burger set count = count + ? where code = ?;";
+	         } else if (order.getMenuStr().equals("2")) {
+	            sql = "update drink set count = count + ? where code = ?;";
+	         } else if (order.getMenuStr().equals("3")) {
+	            sql = "update setmenu set count = count + ? where code = ?;";
+	         }
+
+	         pstmt = conn.prepareStatement(sql);
+	         pstmt.setInt(1, order.getSuryang());
+	         pstmt.setInt(2, order.getChoice());
+	         pstmt.executeUpdate();
+	         
+	         
+	      } catch (ClassNotFoundException e) {
+	         System.out.println("해당 클래스를 찾을 수 없다." + e.getMessage());
+	      } catch (SQLException se) {
+	         System.out.println(se.getMessage());
+	      } finally {
+	         try {
+	            pstmt.close();
+	         } catch (Exception ignored) {
+
+	         }
+
+	         try {
+	            conn.close();
+	         } catch (Exception ignored) {
+
+	         }
+	      }
+	}}
