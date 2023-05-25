@@ -1,0 +1,77 @@
+--> PRIMARY KEY 설정하는 방법: ALTER TABLE drink ADD COLUMN code INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
+
+mysql> use zapangi
+Database changed
+mysql> desc account;
++---------+------+------+-----+---------+----------------+
+| Field   | Type | Null | Key | Default | Extra          |
++---------+------+------+-----+---------+----------------+
+| code    | int  | NO   | PRI | NULL    | auto_increment |
+| m_10000 | int  | YES  |     | NULL    |                |
+| m_5000  | int  | YES  |     | NULL    |                |
+| m_1000  | int  | YES  |     | NULL    |                |
+| m_500   | int  | YES  |     | NULL    |                |
+| m_100   | int  | YES  |     | NULL    |                |
+| m_50    | int  | YES  |     | NULL    |                |
+| m_10    | int  | YES  |     | NULL    |                |
++---------+------+------+-----+---------+----------------+
+8 rows in set (0.01 sec)
+
+mysql> desc drink;
++---------+-------------+------+-----+---------+----------------+
+| Field   | Type        | Null | Key | Default | Extra          |
++---------+-------------+------+-----+---------+----------------+
+| code    | int         | NO   | PRI | NULL    | auto_increment |
+| name    | varchar(20) | YES  |     | NULL    |                |
+| price   | int         | YES  |     | NULL    |                |
+| m_10000 | int         | YES  |     | NULL    |                |
+| m_5000  | int         | YES  |     | NULL    |                |
+| m_1000  | int         | YES  |     | NULL    |                |
+| m_500   | int         | YES  |     | NULL    |                |
+| m_100   | int         | YES  |     | NULL    |                |
+| m_50    | int         | YES  |     | NULL    |                |
+| m_10    | int         | YES  |     | NULL    |                |
+| dates   | date        | YES  |     | NULL    |                |
++---------+-------------+------+-----+---------+----------------+
+11 rows in set (0.00 sec)
+
+mysql> desc drinksale;
++--------+------+------+-----+---------+----------------+
+| Field  | Type | Null | Key | Default | Extra          |
++--------+------+------+-----+---------+----------------+
+| code   | int  | NO   | PRI | NULL    | auto_increment |
+| coke   | int  | YES  |     | NULL    |                |
+| fanta  | int  | YES  |     | NULL    |                |
+| coffee | int  | YES  |     | NULL    |                |
+| water  | int  | YES  |     | NULL    |                |
++--------+------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> desc op_coin;
++---------+------+------+-----+---------+----------------+
+| Field   | Type | Null | Key | Default | Extra          |
++---------+------+------+-----+---------+----------------+
+| code    | int  | NO   | PRI | NULL    | auto_increment |
+| m_10000 | int  | YES  |     | NULL    |                |
+| m_5000  | int  | YES  |     | NULL    |                |
+| m_1000  | int  | YES  |     | NULL    |                |
+| m_500   | int  | YES  |     | NULL    |                |
+| m_100   | int  | YES  |     | NULL    |                |
+| m_50    | int  | YES  |     | NULL    |                |
+| m_10    | int  | YES  |     | NULL    |                |
++---------+------+------+-----+---------+----------------+
+8 rows in set (0.00 sec)
+
+mysql> desc t_sales;
++---------+------+------+-----+---------+----------------+
+| Field   | Type | Null | Key | Default | Extra          |
++---------+------+------+-----+---------+----------------+
+| code    | int  | NO   | PRI | NULL    | auto_increment |
+| m_10000 | int  | YES  |     | NULL    |                |
+| m_5000  | int  | YES  |     | NULL    |                |
+| m_1000  | int  | YES  |     | NULL    |                |
+| m_500   | int  | YES  |     | NULL    |                |
+| m_100   | int  | YES  |     | NULL    |                |
+| m_50    | int  | YES  |     | NULL    |                |
+| m_10    | int  | YES  |     | NULL    |                |
++---------+------+------+-----+---------+----------------+
