@@ -1,4 +1,5 @@
 --> PRIMARY KEY 설정하는 방법: ALTER TABLE drink ADD COLUMN code INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
+--> 먼저 자판기 프로그램에 사용될 DB테이블을 생성한다.
 
 mysql> use zapangi
 Database changed
