@@ -1,6 +1,24 @@
 --> PRIMARY KEY 설정하는 방법: ALTER TABLE drink ADD COLUMN code INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
 --> 먼저 자판기 프로그램에 사용될 DB테이블을 생성한다.
 
+자판기 3-ffer DB연동 소스 문제점 해결
+제공된 소스를 수행 시 DB에 저장되는 데이터의 값이 잘못 upate 된 다.
+1. 각 테이블의 내용을 검색한 후 잘못된 update되는 값을 코드에서 수정하여라.
+- 콘솔창에서 보이는 결과와 DB의 table에 저장되는 값이 일치하여야 한다.
+2. drink 테이블에 상품명이 나타나지 않는다.
+- 구입한 음료의 상품명이 출력되게 코드를 수정하여라.
+B. drinksale 테이블에 상품명의 판매량이 모두 update 된다.
+- 선택한 음료의 판매량만 update되게 코드를 수정하여라.
+4. op.coin 테이블에 금액 갯수가 초기값 상태에서 update 지를 않는다.
+- 금액의 입력에 따른 금액 갯수의 update되게 코드를 수정하여라.
+• 단, 1000원 입력 시 1000원의 갯수 증가, 700원 입력 시 500원 1개, 100원 2개 증가
+5. account 테이블에 금액 갯수가 잘못 update된다.
+• 1000원 입력 시 1000원의 갯수가 증가 되지 않고, 음료수 가격에 대한 금액의 갯수가 counting 되어 update 되는 현상을 수정하여라.
+• 프로그램을 다시 시작 할때 마다 table의 값이 초기화 되는 현상을 수정하여라.
+16. tsales 테이블에 total 금액의 갯수가 잘못 update된다.
+• account 테이블에 현상과 같은 현상이 누적되어 total count 되는 현상을 수정하여라.
+
+
 mysql> use zapangi
 Database changed
 mysql> desc account;
