@@ -1,1 +1,870 @@
 
+Zapangi
+
+
+
+import java.util.Scanner;
+
+public class Zapangi {
+	static Changer biz;
+	Selector order;
+	Scanner scan;
+
+	Zapangi() {
+		scan = new Scanner(System.in);
+	}
+
+	public void show() {
+		System.out.println("자판기 입니다");
+		System.out.println("--------------------------------------------");
+		System.out.println("1.콜라(600) 2.환타(550) 3.커피(370) 4.물(420)");
+		System.out.println("--------------------------------------------");
+	}
+
+	
+	void SelectDrink(int money) {
+		int sel;
+		System.out.println("음료수를 선택 하세요");
+		sel = (int) (scan.next().charAt(0)) - 48;
+		if (sel < 1 || sel > 4) {
+			System.out.println("음료수를 제대로 고르세요 (1-4)");
+			SelectDrink(money);
+		} else {
+			order = new Selector(sel);
+			biz.CheckM(money, order);
+		}
+	}
+
+
+}
+
+
+
+-----------------------------------------------------------------
+ZapangiMain
+
+public class ZapangiMain{
+	public static void main(String[] args) {
+		Zapangi zapan = new Zapangi();
+		zapan.show();
+		Changer biz = new Changer();
+		biz.doBusiness();
+	}
+}
+
+
+-----------------------------------------------------------------
+
+Selector
+
+
+public class Selector{
+
+	private String name = "";
+	private int price = 0;
+
+	public Selector(int sel) {
+		
+			switch (sel) {
+			case 1:
+				this.name = "콜라";
+				this.price = 600;
+				break;
+			case 2:
+				this.name = "환타";
+				this.price = 550;
+				break;
+			case 3:
+				this.name = "커피";
+				this.price = 370;
+				break;
+			case 4:
+				this.name = "물";
+				this.price = 420;
+				break;
+			}
+		}
+
+
+	public String getName() {
+		return name;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+}
+
+
+-----------------------------------------------------------------
+Changer 
+
+
+import java.util.Scanner;
+
+public class Changer {
+	static Scanner scan;
+	static int money = 0;
+	static int t_money = 0;
+	static Zapangi za;
+	static Dao db;
+	private static int s_money;
+
+	public Changer(){
+		scan = new Scanner(System.in);
+		za = new Zapangi();
+		db = new Dao();
+		db.opcheck();
+		db.opCoins();
+	}
+
+
+	void doBusiness() {
+		while (true) {
+			if (money == 0) {
+				InputCoin();
+			}
+			za.SelectDrink(money);
+			System.out.println("추가 선택 하시겠습니까? (y/n)");
+			char exit = scan.next().charAt(0);
+			if (exit == 'n' || exit == 'N') {
+				db.finish();
+				System.out.println("Exit Choose Drink");
+				break;
+			} else if (exit == 'y' || exit == 'Y') {
+			}
+			money = t_money;
+			System.out.println("현재 잔액(doBusiness):" + money + "t_money: " + t_money);
+		}
+	}
+
+	static void placeOrder(Selector order) {
+		db.addOrder(order);
+	}
+
+	static void InputCoin() {
+		System.out.println("금액을 입력하세요: ");
+		int s = scan.nextInt();
+		money += s;
+		s_money = s;   
+		t_money = money;
+		System.out.println("-----------------------");
+		System.out.println("현재 잔액(InputCoin): " + money);
+		System.out.println("-----------------------");
+	}
+
+
+	static void CheckM(int money, Selector order) {
+		char sel;
+		if (money < order.getPrice()) {
+			System.out.println("음료수가 더 비싸요......");
+			System.out.println("금액을 더 넣으시겠습니까???(y/n)");
+			sel = scan.next().charAt(0);
+			if (sel == 'y') {
+				InputCoin();
+				money = t_money;
+				za.SelectDrink(money);
+			} else if (sel == 'n') {
+				db.finish();
+				System.out.println("자판기 종료.");
+				System.exit(0);
+			}
+		} else {
+			placeOrder(order);
+			ChangePay(money, order);
+		}
+	}
+
+
+	static void ChangePay(int money, Selector order) {
+
+		int change = money - order.getPrice();
+
+		db.account(money, change, s_money);
+
+		db.calCoins(change);
+		System.out.println("-------------------------------------------------------------------------------------");
+		System.out.println("선택한  음료수는 " + order.getName() + "이며,  주문 금액은" + order.getPrice() + "이며,   거스름 돈은 " + change + "원 입니다.");
+		System.out.print("10000원 : " + db.coins[0] + " || ");
+		System.out.print("5000원 : " + db.coins[1] + " || ");
+		System.out.print("1000원 : " + db.coins[2] + " || ");
+		System.out.print("500원 : " + db.coins[3] + " || ");
+		System.out.print("100원 : " + db.coins[4] + " || ");
+		System.out.print("50원 : " + db.coins[5] + " || ");
+		System.out.println("10원 : " + db.coins[6] + "개 입니다. ");
+		System.out.println("-------------------------------------------------------------------------------------");
+		t_money = change;
+
+		s_money = 0;		
+
+		db.checkAct();
+		
+		System.out.println("-----------------------");
+		System.out.println("현재 잔액(ChangePay) :" + change);
+		System.out.println("-----------------------");
+	}
+}
+
+
+-----------------------------------------------------------------
+Dao 
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Dao {
+	int[] dstocks = { 50, 35, 65, 40 };// 콜라, 환타, 커피, 물 재고
+	int[] coins;
+	int[] drinkSale = new int[4];
+	int mo_10000, mo_5000, mo_1000, mo_500, mo_100, mo_50, mo_10;
+	String[] coinName = { "m_10000", "m_5000", "m_1000", "m_500", "m_100", "m_50", "m_10" };
+	int ac_10000, ac_5000, ac_1000, ac_500, ac_100, ac_50, ac_10;
+	String[] Pname = { "'콜라'", "'환타'", "'커피'", "'물'" };
+	int[] cnm = {};
+	int stock = 0, price = 0;
+	static int total = 0;
+	String name;
+	String d_name;
+	int d_price, d_total;
+
+	// DB에 주문별로 저장
+	public void addOrder(Selector order) {
+		System.out.println("-----------------");
+		System.out.println("   주문을 DB에 저장 합니다    ");
+		System.out.println("-----------------");
+		calCoins(order.getPrice());
+
+		switch (order.getName()) {
+		case "콜라":
+			name = order.getName();
+			stock = dstocks[0];
+			price = order.getPrice();
+			break;
+		case "환타":
+			name = order.getName();
+			stock = dstocks[1];
+			price = order.getPrice();
+			break;
+		case "커피":
+			name = order.getName();
+			stock = dstocks[2];
+			price = order.getPrice();
+			break;
+		case "물":
+			name = order.getName();
+			stock = dstocks[3];
+			price = order.getPrice();
+			break;
+		}
+
+		calCoins(order.getPrice());
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "";
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/vending", "root", "1234");
+			conn.setAutoCommit(false);
+			sql = "insert into drink (name, price, m_10000, m_5000, m_1000, m_500, m_100, m_50, m_10, dates) values(?,?,?,?,?,?,?,?,?,?)";
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setString(1, order.getName());
+			pstmt.setInt(2, order.getPrice());
+			pstmt.setInt(3, coins[0]);
+			pstmt.setInt(4, coins[1]);
+			pstmt.setInt(5, coins[2]);
+			pstmt.setInt(6, coins[3]);
+			pstmt.setInt(7, coins[4]);
+			pstmt.setInt(8, coins[5]);
+			pstmt.setInt(9, coins[6]);
+			pstmt.setDate(10, getCurrentJavaSqlDate()); // 밑의 함수화 같이 사용해서 날자 정함
+			pstmt.executeUpdate();
+			conn.commit();
+
+		} catch (ClassNotFoundException cnfe) {
+			System.out.println("해당 클라스를 찾을수 없습니다." + cnfe.getMessage());
+		} catch (SQLException se) {
+			System.out.println(se.getMessage());
+		} finally {
+			try {
+				pstmt.close();
+			} catch (Exception ignored) {
+
+			}
+			try {
+				conn.close();
+			} catch (Exception ignored) {
+			}
+		}
+		totals(order);
+	}
+
+	// 날짜 구하기
+	private static java.sql.Date getCurrentJavaSqlDate() {
+		java.util.Date today = new java.util.Date();
+		return new java.sql.Date(today.getTime());
+	}
+
+	// t_sales table: 각 동전별 총 판매 금액 테이블 입력
+	public void totals(Selector order) {
+		cnm = new int[7];
+
+		for (int i = 0; i < 7; i++) {
+			String s = coinName[i];
+			cnm[i] = salesSum(s);
+		}
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "", sqla = "";
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/vending", "root", "1234");
+
+			// 테이블 초기화 하고 총계만 한 row에 들어가게 만듬
+			//sqla = "truncate t_sales";
+			//pstmt = conn.prepareStatement(sqla);
+			//pstmt.executeUpdate();
+			//pstmt.close();			
+			sql = "select * from t_sales";
+
+			pstmt = conn.prepareStatement(sql);
+			//conn.commit();
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				d_name = rs.getString("drink");
+				d_price = rs.getInt("price");
+				d_total= rs.getInt("total");
+			}
+			
+			switch (order.getName()) {
+			case "콜라":
+				sql = "insert into t_sales (drink, price, total) values(?,?,?)";
+
+				pstmt = conn.prepareStatement(sql);
+
+				pstmt.setString(1, order.getName());
+				pstmt.setInt(2, order.getPrice());
+				pstmt.setInt(3, d_total +=order.getPrice());
+				break;
+				
+			case "환타":
+				sql = "insert into t_sales (drink, price, total) values(?,?,?)";
+
+				pstmt = conn.prepareStatement(sql);
+
+				pstmt.setString(1, order.getName());
+				pstmt.setInt(2, order.getPrice());
+				pstmt.setInt(3, d_total +=order.getPrice());
+				break;
+				
+			case "커피":
+				sql = "insert into t_sales (drink, price, total) values(?,?,?)";
+
+				pstmt = conn.prepareStatement(sql);
+
+				pstmt.setString(1, order.getName());
+				pstmt.setInt(2, order.getPrice());
+				pstmt.setInt(3, d_total +=order.getPrice());
+				break;
+				
+			case "물":
+				sql = "insert into t_sales (drink, price, total) values(?,?,?)";
+
+				pstmt = conn.prepareStatement(sql);
+
+				pstmt.setString(1, order.getName());
+				pstmt.setInt(2, order.getPrice());
+				pstmt.setInt(3, d_total +=order.getPrice());
+				break;
+
+			default:
+				break;
+			}
+
+			
+			//pstmt.setInt(3, coins[0]);
+			
+
+			pstmt.executeUpdate();
+
+		} catch (ClassNotFoundException cnfe) {
+			System.out.println("해당 클라스를 찾을수 없습니다." + cnfe.getMessage());
+		} catch (SQLException se) {
+			System.out.println(se.getMessage());
+		} finally {
+			try {
+				pstmt.close();
+			} catch (Exception ignored) {
+			}
+			try {
+				conn.close();
+			} catch (Exception ignored) {
+			}
+		}
+
+	}
+
+	// 판매 되면서 drink table에서 각 금액 단위별로 누적 총계가 계산되는 메소드
+	// totals메소드에서 사용함
+	public int salesSum(String cn) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "";
+		int value = 0;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/vending", "root", "1234");
+
+			sql = "select sum(" + cn + ") from drink";
+
+			pstmt = conn.prepareStatement(sql);
+			ResultSet result = pstmt.executeQuery();
+			result.next();
+			String sum = result.getString(1);
+			value = Integer.parseInt(sum);
+			pstmt.close();
+		} catch (Exception exc) {
+			System.out.println(exc.getMessage());
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return value;
+	}
+
+	public void opcheck() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "";
+		int value = 0;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/vending", "root", "1234");
+
+			conn.setAutoCommit(false);
+
+			sql = "select * from op_coin";
+
+			pstmt = conn.prepareStatement(sql);
+			conn.commit();
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				mo_10000 = rs.getInt("m_10000");
+				mo_5000 = rs.getInt("m_5000");
+				mo_1000 = rs.getInt("m_1000");
+				mo_500 = rs.getInt("m_500");
+				mo_100 = rs.getInt("m_100");
+				mo_50 = rs.getInt("m_50");
+				mo_10 = rs.getInt("m_10");
+			}
+
+		} catch (ClassNotFoundException e) {
+			System.out.println("해당 클래스 찾을 수 없습니다" + e.getMessage());
+		} catch (SQLException se) {
+			System.out.println(se.getMessage());
+		} finally {
+			try {
+				pstmt.close();
+			} catch (Exception ignored) {
+			}
+			try {
+				conn.close();
+			} catch (Exception ignored) {
+			}
+		}
+	}
+
+	public void accheck() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "";
+		int value = 0;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/vending", "root", "1234");
+
+			conn.setAutoCommit(false);
+
+			sql = "select * from account";
+
+			pstmt = conn.prepareStatement(sql);
+			conn.commit();
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				ac_10000 = rs.getInt("m_10000");
+				ac_5000 = rs.getInt("m_5000");
+				ac_1000 = rs.getInt("m_1000");
+				ac_500 = rs.getInt("m_500");
+				ac_100 = rs.getInt("m_100");
+				ac_50 = rs.getInt("m_50");
+				ac_10 = rs.getInt("m_10");
+			}
+
+		} catch (ClassNotFoundException e) {
+			System.out.println("해당 클래스 찾을 수 없습니다" + e.getMessage());
+		} catch (SQLException se) {
+			System.out.println(se.getMessage());
+		} finally {
+			try {
+				pstmt.close();
+			} catch (Exception ignored) {
+			}
+			try {
+				conn.close();
+			} catch (Exception ignored) {
+			}
+		}
+	}
+	
+	
+	// 기본 운영 자금 테이블
+	public void opCoins() {
+
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "", sqla = "";
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/vending", "root", "1234");
+
+			// 테이블 초기화 하고 총계만 한 row에 들어가게 만듬
+			sqla = "truncate op_coin";
+			pstmt = conn.prepareStatement(sqla);
+			pstmt.executeUpdate();
+			pstmt.close();
+
+			sql = "insert into op_coin (m_10000, m_5000, m_1000, m_500, m_100, m_50, m_10) values(?,?,?,?,?,?,?)";
+
+			pstmt = conn.prepareStatement(sql);
+
+
+			if (mo_10000 < 1) {
+				mo_10000 = 50;
+				mo_5000 = 50;
+				mo_1000 = 50;
+				mo_500 = 50;
+				mo_100 = 50;
+				mo_50 = 50;
+				mo_10 = 50;
+			}
+
+			pstmt.setInt(1, mo_10000);
+			pstmt.setInt(2, mo_5000);
+			pstmt.setInt(3, mo_1000);
+			pstmt.setInt(4, mo_500);
+			pstmt.setInt(5, mo_100);
+			pstmt.setInt(6, mo_50);
+			pstmt.setInt(7, mo_10);
+
+			pstmt.executeUpdate();
+
+		} catch (ClassNotFoundException cnfe) {
+			System.out.println("해당 클라스를 찾을수 없습니다." + cnfe.getMessage());
+		} catch (SQLException se) {
+			System.out.println(se.getMessage());
+		} finally {
+			try {
+				pstmt.close();
+			} catch (Exception ignored) {
+			}
+			try {
+				conn.close();
+			} catch (Exception ignored) {
+			}
+		}
+	}
+
+	// 전체 동전 현황 테이블 입니다. (운영자금 + 현금 투입 금액 - 잔돈)
+	public void account(int money, int change, int s_money) {
+		int[] coinAct = new int[7];
+		int a, b, c, d, e, f, g;
+		calCoins(s_money);
+
+		a = mo_10000 + coins[0];
+		b = mo_5000 + coins[1];
+		c = mo_1000 + coins[2];
+		d = mo_500 + coins[3];
+		e = mo_100 + coins[4];
+		f = mo_50 + coins[5];
+		g = mo_10 + coins[6];
+
+		calCoins(change);
+		coinAct[0] = a - coins[0];
+		coinAct[1] = b - coins[1];
+		coinAct[2] = c - coins[2];
+		coinAct[3] = d - coins[3];
+		coinAct[4] = e - coins[4];
+		coinAct[5] = f - coins[5];
+		coinAct[6] = g - coins[6];
+
+		mo_10000 = a;
+		mo_5000 = b;
+		mo_1000 = c;
+		mo_500 = d;
+		mo_100 = e;
+		mo_50 = f;
+		mo_10 = g;
+		opCoins();
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "", sqla = "";
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/vending", "root", "1234");
+
+			// 테이블 초기화 하고 총계만 한 row에 들어가게 만듬
+			sqla = "truncate account";
+			pstmt = conn.prepareStatement(sqla);
+			pstmt.executeUpdate();
+			pstmt.close();
+
+			sql = "insert into account (m_10000, m_5000, m_1000, m_500, m_100, m_50, m_10) values(?,?,?,?,?,?,?)";
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setInt(1, coinAct[0]);
+			pstmt.setInt(2, coinAct[1]);
+			pstmt.setInt(3, coinAct[2]);
+			pstmt.setInt(4, coinAct[3]);
+			pstmt.setInt(5, coinAct[4]);
+			pstmt.setInt(6, coinAct[5]);
+			pstmt.setInt(7, coinAct[6]);
+
+			pstmt.executeUpdate();
+		} catch (ClassNotFoundException cnfe) {
+			System.out.println("해당 클라스를 찾을수 없습니다." + cnfe.getMessage());
+		} catch (SQLException se) {
+			System.out.println(se.getMessage());
+		} finally {
+			try {
+				pstmt.close();
+			} catch (Exception ignored) {
+			}
+			try {
+				conn.close();
+			} catch (Exception ignored) {
+			}
+		}
+	}
+
+	// 잔고나 재고 확인 테이블
+	public void checkAct() {
+
+		// 재고 테이블
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "";
+		int value = 0;
+		try {
+			System.out.println("----------");
+			System.out.println("    판매 갯수      ");
+			for (int i = 0; i < 4; i++) {
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/vending", "root", "1234");
+				conn.setAutoCommit(false);
+				sql = "select count(*) from drink where name = " + Pname[i];
+				PreparedStatement pst = conn.prepareStatement(sql);
+				conn.commit();
+				ResultSet result = pst.executeQuery();
+
+				result.next();
+				String sum = result.getString(1);
+
+				value = Integer.parseInt(sum);
+				System.out.println(Pname[i] + " : " + value);
+
+				switch (Pname[i]) {
+				case "'콜라'":
+					drinkSale[0] = value;
+					break;
+				case "'환타'":
+					drinkSale[1] = value;
+					break;
+				case "'커피'":
+					drinkSale[2] = value;
+					break;
+				case "'물'":
+					drinkSale[3] = value;
+					break;
+				}
+
+				if (value > 50) {
+					conn.rollback();
+					System.out.println("재고가 부족 합니다. 관리자에게 문의 하세요");
+				}
+				pst.close();
+
+			}
+			System.out.println("----------");
+
+			int st = (cnm[0] * 10000) + (cnm[1] * 5000) + (cnm[2] * 1000) + (cnm[3] * 500) + (cnm[4] * 100)
+					+ (cnm[5] * 50) + (cnm[6] * 10);
+
+			System.out.println("-------------------------------------------------------------------------------------");
+			System.out.println("매출 토탈 확인 :" + st + "원입니다.");
+			System.out.print("10000원 : " + cnm[0] + " || ");
+			System.out.print("5000원 : " + cnm[1] + " || ");
+			System.out.print("1000원 : " + cnm[2] + " || ");
+			System.out.print("500원 : " + cnm[3] + " || ");
+			System.out.print("100원 : " + cnm[4] + " || ");
+			System.out.print("50원 : " + cnm[5] + " || ");
+			System.out.println("10원 : " + cnm[6] + "개 입니다. ");
+			System.out.println("-------------------------------------------------------------------------------------");
+
+		} catch (Exception exc) {
+			System.out.println(exc.getMessage());
+		}
+
+		drinkSales();
+
+		// 잔고 테이블
+		try {
+			System.out.println(
+					"--------------------------------------------------------------------------------------------");
+			System.out.println("자판기 내부 화폐 갯수");
+			int[] coin = { 0, 0, 0, 0, 0, 0, 0 };
+			for (int i = 0; i < 7; i++) {
+				conn.setAutoCommit(false);
+				sql = "select " + coinName[i] + " from op_coin";
+
+				PreparedStatement pst = conn.prepareStatement(sql);
+				conn.commit();
+				ResultSet result = pst.executeQuery();
+				result.next();
+				String sum = result.getString(1);
+				value = Integer.parseInt(sum);
+				coin[i] = value;
+				if (value <= 0) {
+					conn.rollback();
+					System.out.println(coinName[i] + "잔고가 부족 합니다. 관리자에게 문의 하세요");
+				}
+				pst.close();
+			}
+			System.out.print("10000원 : " + coin[0] + " || ");
+			System.out.print("5000원 : " + coin[1] + " || ");
+			System.out.print("1000원 : " + coin[2] + " || ");
+			System.out.print("500원 : " + coin[3] + " || ");
+			System.out.print("100원 : " + coin[4] + " || ");
+			System.out.print("50원 : " + coin[5] + " || ");
+			System.out.println("10원 : " + coin[6] + "개 입니다. ");
+			System.out.println(
+					"--------------------------------------------------------------------------------------------");
+
+		} catch (Exception exc) {
+			System.out.println(exc.getMessage());
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public void finish() {
+		
+		accheck();
+		
+		mo_10000 = ac_10000;
+		mo_5000 = ac_5000;
+		mo_1000 = ac_1000;
+		mo_500 = ac_500;
+		mo_100 = ac_100;
+		mo_50 = ac_50;
+		mo_10 = ac_10;
+		opCoins();
+		
+			System.out.println("--------------------------------------------------------------------------------------------");
+			System.out.println("자판기 내부 화폐 갯수(잔돈 금액을 뺀 금액)");
+			System.out.print("10000원 : " + mo_10000 + " || ");
+			System.out.print("5000원 : " + mo_5000 + " || ");
+			System.out.print("1000원 : " + mo_1000 + " || ");
+			System.out.print("500원 : " + mo_500 + " || ");
+			System.out.print("100원 : " + mo_100 + " || ");
+			System.out.print("50원 : " + mo_50 + " || ");
+			System.out.println("10원 : " + mo_10 + "개 입니다. ");
+			System.out.println(
+					"--------------------------------------------------------------------------------------------");
+
+	}
+
+	void drinkSales() {
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = "";
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/vending", "root", "1234");
+
+			// 테이블 초기화 하고 총계만 한 row에 들어가게 만듬
+			sql = "truncate drinkSale";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.executeUpdate();
+			pstmt.close();
+
+			sql = "insert into drinksale (COKE, FANTA, COFFEE, WATER) values(?,?,?,?)";
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setInt(1, drinkSale[0]);
+			pstmt.setInt(2, drinkSale[1]);
+			pstmt.setInt(3, drinkSale[2]);
+			pstmt.setInt(4, drinkSale[3]);
+
+			pstmt.executeUpdate();
+		} catch (ClassNotFoundException cnfe) {
+			System.out.println("해당 클라스를 찾을수 없습니다." + cnfe.getMessage());
+		} catch (SQLException se) {
+			System.out.println(se.getMessage());
+		} finally {
+			try {
+				pstmt.close();
+			} catch (Exception ignored) {
+			}
+			try {
+				conn.close();
+			} catch (Exception ignored) {
+			}
+		}
+
+	}
+
+	// 모든 금액 동전별로 나누기
+	void calCoins(int amt) {
+		coins = new int[7];
+		int temp;
+
+		coins[0] = amt / 10000;
+		temp = amt % 10000;
+		coins[1] = temp / 5000;
+		temp = temp % 5000;
+		coins[2] = temp / 1000;
+		temp = temp % 1000;
+		coins[3] = temp / 500;
+		temp = temp % 500;
+		coins[4] = temp / 100;
+		temp = temp % 100;
+		coins[5] = temp / 50;
+		temp = temp % 50;
+		coins[6] = temp / 10;
+		temp = temp % 10;
+	}
+
+}
+
+
+
