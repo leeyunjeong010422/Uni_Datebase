@@ -1,7 +1,4 @@
-
 Zapangi
-
-
 
 import java.util.Scanner;
 
@@ -37,7 +34,6 @@ public class Zapangi {
 
 
 }
-
 
 
 -----------------------------------------------------------------
