@@ -25,7 +25,7 @@
 - account 테이블에 현상과 같은 현상이 누적되어 total count 되는 현상을 수정하여라.
 
 
-
+-- 기말고사
 
 mysql> use zapangi
 Database changed
