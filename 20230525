@@ -26,6 +26,7 @@
 
 -- 기말고사
 
+
 mysql> use zapangi
 Database changed
 mysql> desc account;
